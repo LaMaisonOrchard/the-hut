@@ -44,6 +44,14 @@ public
             super("Illegal type for an associative array");
         }
     }
+
+    class IllegalIndex : NodeException
+    {
+        this()
+        {
+            super("Unable to index the type or index out of range");
+        }
+    }
 }
 
 public
@@ -802,11 +810,51 @@ public
 			}
 		}
 		
+        @trusted Node opIndex(size_t idx)
+        {
+            if (_type != NodeType.array_)
+            {
+				throw new IllegalIndex;
+            }
+            
+            if (idx >= _array.length)
+            {
+				throw new IllegalIndex;
+            }
+            
+            return _array[idx];
+        }
+        
+        bool opEquals(ref const Node s) const
+        {
+            return this.toHash == s.toHash;
+        }
+        
+        size_t toHash() const @trusted nothrow
+        {
+            switch(_type)
+            {
+                case NodeType.null_: return 0;
+                case NodeType.signedInt_  : return  typeid(integer).getHash(&integer);
+                case NodeType.unsignedInt_: return ~typeid(integer).getHash(&integer);
+                case NodeType.boolean_    : return  typeid(boolean).getHash(&boolean);
+                case NodeType.float_      : return  typeid(float64).getHash(&float64);
+                case NodeType.double_     : return ~typeid(float64).getHash(&float64);
+                case NodeType.string_     : return  typeid(text).getHash(&text);
+                case NodeType.byteArray_  : return  typeid(byteArray).getHash(&byteArray);
+                case NodeType.array_      : return  typeid(_array).getHash(&_array);
+                case NodeType.associativeArray_: return typeid(_associativeArray).getHash(&_associativeArray);
+                default : return -1;
+            }
+        }
+        
 		package NodeType type()
 		{
 			return _type;
 		}
 		
+        
+        
 		private
 		{
 			NodeType _type = NodeType.null_;
@@ -814,10 +862,11 @@ public
             uint     _tag   = 0;
 			union
 			{
-				ulong  integer;
-				bool   boolean;
-				double float64;
-                string text;
+				ulong   integer;
+				bool    boolean;
+				double  float64;
+                string  text;
+                ubyte[] byteArray;
 				Node[]     _array;
 				Node[Node] _associativeArray;
 			}
@@ -873,6 +922,7 @@ public
         int[] y = [1,2,3,4];
         Node b = y;
         assert(b.length == 4);
+        assert(b[1].as!int == 2);
         
         Node c = [[1,2],[3,4]];
         assert(c.length == 2);
@@ -906,6 +956,7 @@ public
         b[2.3] = "2.3";
         Node c = b;
         assert(c.length == 1);
+        //assert(c[2.3].as!string == "2.3");  -- TODO
         
         auto d = a.as!(string[double]);
 	}

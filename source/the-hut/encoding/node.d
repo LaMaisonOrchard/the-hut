@@ -8,6 +8,7 @@
 import std.stdio;
 import std.array;
 import std.traits;
+import std.exception;
 
 //// Exceptions //////////////////////////
 public
@@ -596,7 +597,7 @@ public
 		{
             if (_type != NodeType.array_)
             {
-				throw new UnsupportedType;
+				throw new TypeCast;
             }
             
             T[] list;
@@ -608,7 +609,23 @@ public
             
             return list;
         }
-		
+        
+		@trusted T[O] as(T1:T[O], T, O)()
+        if (!isSomeChar!T)
+		{
+            if (_type != NodeType.associativeArray_)
+            {
+				throw new TypeCast;
+            }
+            
+            T[O] list;
+            foreach(i, t ; _array)
+            {
+                list[i] = _array[i].as!T;
+            }
+            
+            return list;
+        }
 		
 		bool isA(T)()
 		{
@@ -827,6 +844,8 @@ public
 		assert(!a.isA!double);
 		assert(!a.isA!string);
 		assert(a.type == NodeType.null_);
+        
+        assertThrown!TypeCast(a.as!(string[]));
 	}
 	
 	unittest
@@ -848,6 +867,8 @@ public
 		assert(!a.isA!double);
 		assert(!a.isA!string);
 		assert(a.type == NodeType.array_);
+        
+        assertThrown!TypeCast(a.as!(string[double]));
         
         int[] y = [1,2,3,4];
         Node b = y;
@@ -879,10 +900,14 @@ public
 		assert(!a.isA!string);
 		assert(a.type == NodeType.associativeArray_);
         
+        assertThrown!TypeCast(a.as!bool);
+        
         string[double] b;
         b[2.3] = "2.3";
         Node c = b;
         assert(c.length == 1);
+        
+        auto d = a.as!(string[double]);
 	}
 	
 	unittest
@@ -906,6 +931,8 @@ public
 		assert(!a.isA!string);
 		assert(a.type == NodeType.boolean_);
 		assert(a.as!bool == true);
+        
+        assertThrown!TypeCast(a.as!uint);
 	}
 	
 	unittest
@@ -928,6 +955,8 @@ public
 		assert(!a.isA!string);
 		assert(a.type == NodeType.unsignedInt_);
 		assert(a.as!uint == 7U);
+        
+        a.as!int;
 	}
 	
 	unittest
@@ -972,6 +1001,9 @@ public
 		assert(!a.isA!string);
 		assert(a.type == NodeType.signedInt_);
 		assert(a.as!int == -7);
+        
+        assertThrown!TypeCast(a.as!uint);
+        assertThrown!TypeCast(a.as!float);
 	}
 	
 	unittest
@@ -1016,6 +1048,8 @@ public
 		assert(!a.isA!string);
 		assert(a.type == NodeType.double_);
 		assert(a.as!double == 0.500000001);
+        
+        assertThrown!TypeCast(a.as!float);
 	}
 	
 	unittest
@@ -1026,7 +1060,7 @@ public
 		Node a4 = 2.3F;
 		Node a5 = 7.8;
 		Node a6 = "fred";
-		Node a7 = [1,2,3,4,5];
+		Node a7 = [cast(int)(1),2,3,4,5];
 		Node a8 = ["fred": 78, "harry" : 98];
         
 		a1 = 1;
@@ -1035,7 +1069,7 @@ public
 		a3 = 2.3F;
 		a4 = 7.8;
 		a5 = "fred";
-		a6 = [1,2,3,4,5];
+		a6 = [cast(int)(1),2,3,4,5];
 		a7 = ["fred": 78, "harry" : 98];
 	}
 }

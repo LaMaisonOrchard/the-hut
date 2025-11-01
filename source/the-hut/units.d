@@ -48,9 +48,9 @@ public
             return BaseUnits!type(this.value * lhs);
         }
         
-        const(InvBaseUnits!type) opBinaryRight(string op : "/")(const(double) lhs) const
+        auto opBinaryRight(string op : "/")(const(double) lhs) const
         {
-            return InvBaseUnits!type(lhs/this.value);
+            return BaseUnits!(combineDiv("1", type))(lhs/this.value);
         }
 
         const(BaseUnits!type) opBinary(string op : "/")(const(double) rhs) const
@@ -136,126 +136,6 @@ public
         }
     }
     
-    struct InvBaseUnits(string type)
-    {
-        this(const(InvBaseUnits!type) other)
-        {
-            this.value = other.value;
-            writeln(this.value);
-        }
-        
-        string toString() const
-        {
-            return format!("%G%s")(this.value, standard(InverseUnits(type)));
-        }
-        
-        private this(const(double) value)
-        {
-            this.value = value;
-        }
-
-        const(InvBaseUnits!type) opBinary(string op : "*")(const(double) rhs) const
-        {
-            return InvBaseUnits!type(this.value * rhs);
-        }
-        
-        const(InvBaseUnits!type) opBinaryRight(string op : "*")(const(double) lhs) const
-        {
-            return InvBaseUnits!type(this.value * lhs);
-        }
-
-        auto opBinary(string op : "*", string type2)(const(BaseUnits!type2) rhs) const
-        {
-            return BaseUnits!(combine(type, type2))(this.value * rhs.value);
-        }
-
-        const(double) opBinary(string op : "/")(const(BaseUnits!type) rhs) const
-        {
-            return (this.value * rhs.value);
-        }
-
-        auto opBinary(string op : "/", string type2)(const(BaseUnits!type2) rhs) const
-        if (type != type2)
-        {
-            return BaseUnits!(combineDiv(type, type2))(this.value * rhs.value);
-        }
-
-        const(InvBaseUnits!type) opBinary(string op : "/")(const(double) rhs) const
-        {
-            return InvBaseUnits!type(this.value / rhs);
-        }
-        
-        const(BaseUnits!type) opBinaryRight(string op : "/")(const(double) lhs) const
-        {
-            return BaseUnits!type(lhs/this.value);
-        }
-
-        const(InvBaseUnits!type) opBinary(string op : "+")(const(InvBaseUnits!type) rhs) const
-        {
-            return InvBaseUnits!type(this.value + rhs.value);
-        }
-        
-        const(InvBaseUnits!type) opBinary(string op : "-")(const(InvBaseUnits!type) rhs) const
-        {
-            return InvBaseUnits!type(this.value - rhs.value);
-        }
-
-        const(InvBaseUnits!type) opOpAssign(string op : "*")(const(double) rhs)
-        {
-            return InvBaseUnits!type(this.value *= rhs);
-        }
-
-        const(InvBaseUnits!type) opOpAssign(string op : "/")(const(double) rhs)
-        {
-            return InvBaseUnits!type(this.value /= rhs);
-        }
-
-        const(InvBaseUnits!type) opOpAssign(string op : "+")(const(InvBaseUnits!type) rhs)
-        {
-            return InvBaseUnits!type(this.value += rhs.value);
-        }
-        
-        const(InvBaseUnits!type) opOpAssign(string op : "-")(const(InvBaseUnits!type) rhs)
-        {
-            return InvBaseUnits!type(this.value -= rhs.value);
-        }
-        
-        int opCmp(const(InvBaseUnits!type) rhs) const
-        {
-            if (this.value == rhs.value)
-            {
-                return 0;
-            }
-            else if (this.value < rhs.value)
-            {
-                return -1;
-            }
-            else
-            {
-                return 1;
-            }
-        }
-        
-        private double value;
-    }
-        
-    bool opEquals(string type)(const(InvBaseUnits!type) a, const(InvBaseUnits!type) b)
-    {
-        return a.value == b.value;
-    }
-        
-    const(InvBaseUnits!type) abs(string type)(const(InvBaseUnits!type) rhs)
-    {
-        if (rhs.value < 0.0)
-        {
-            return InvBaseUnits!type(-rhs.value);
-        }
-        else
-        {
-            return rhs;
-        }
-    }
-    
     enum um = BaseUnits!"m"(1.0E-6);
     enum mm = BaseUnits!"m"(1.0E-3);
     enum cm = BaseUnits!"m"(1.0E-2);
@@ -304,7 +184,7 @@ public
     enum MW = Power(1.0E9);
 }
 
-// m, g, s, A, K, mol, cd, Hz, Error
+// m, g, s, A, K, mol, cd, Cyl, Error
 enum int UNITS_LEN = 9;
 
 // J = k(gm2/s2)
@@ -333,10 +213,16 @@ string standard(string type) pure
     switch (type)
     {
         case "m2g/s2" : return "mJ";
-        case "s2/m2g" : return "1/mJ";
+        case "s2/m2g" : return " 1/mJ";
         
         case "m2g/s" : return "mW";
-        case "s/m2g" : return "1/mW";
+        case "s/m2g" : return " 1/mW";
+        
+        case "Cyl/s" : return "Hz";
+        case "s/Cyl" : return " 1/Hz";
+        
+        case "Cyl" : return "Cycles";
+        case "1/Cyl" : return " 1/Cycles";
         
         default: return type;
     }
@@ -362,6 +248,7 @@ void extract(string type, int[UNITS_LEN] a, const(int)inv) pure
         if (type[0] == '/')
         {
             mul = -mul;
+            type = type[1..$];
         }
         else
         {
@@ -403,9 +290,9 @@ void extract(string type, int[UNITS_LEN] a, const(int)inv) pure
                 }
                 break;
                 
-                case 'H': idx = 7; type = type[1..$]; break;
+                case 'C': idx = 7; type = type[1..$]; break;
                 {
-                    if ((type.length > 2) && (type[0..2] == "Hz"))
+                    if ((type.length > 2) && (type[0..3] == "Cyl"))
                     {
                         idx = 7;
                         type = type[2..$];
@@ -459,7 +346,7 @@ string build(int[UNITS_LEN] a) pure
         {
             switch(i)
             {
-                // m, g, s, A, K, mol, cd, Hz, Error
+                // m, g, s, A, K, mol, cd, Cyl, Error
                 case 0: type[idx++] = 'm'; break;
                 case 1: type[idx++] = 'g'; break;
                 case 2: type[idx++] = 's'; break;
@@ -467,7 +354,7 @@ string build(int[UNITS_LEN] a) pure
                 case 4: type[idx++] = 'K'; break;
                 case 5: type[idx..idx+3] = "mol"; idx += 3; break;
                 case 6: type[idx..idx+2] = "cd";  idx += 2; break;
-                case 7: type[idx..idx+2] = "Hz";  idx += 2; break;
+                case 7: type[idx..idx+3] = "Cyl"; idx += 2; break;
                 default: break;
             }
         
@@ -506,7 +393,7 @@ string build(int[UNITS_LEN] a) pure
             
             switch(i)
             {
-                // m, g, s, A, K, mol, cd, Hz, Error
+                // m, g, s, A, K, mol, cd, Cyl, Error
                 case 0: type[idx++] = 'm'; break;
                 case 1: type[idx++] = 'g'; break;
                 case 2: type[idx++] = 's'; break;
@@ -514,7 +401,7 @@ string build(int[UNITS_LEN] a) pure
                 case 4: type[idx++] = 'K'; break;
                 case 5: type[idx..idx+3] = "mol"; idx += 3; break;
                 case 6: type[idx..idx+2] = "cd";  idx += 2; break;
-                case 7: type[idx..idx+2] = "Hz";  idx += 2; break;
+                case 7: type[idx..idx+2] = "Cyl"; idx += 2; break;
                 default: break;
             }
         
@@ -628,8 +515,8 @@ unittest
 	writeln("Units Test 5");
     Length a = 7*m;
     
-    InvBaseUnits!"m" b = 2/a;
-	assert(abs(b - InvBaseUnits!"m"(2.0/7.0)) < InvBaseUnits!"m"(1E-6));
+    BaseUnits!"1/m" b = 2/a;
+	assert(abs(b - BaseUnits!"1/m"(2.0/7.0)) < BaseUnits!"1/m"(1E-6));
     
     a = 2/b;
 	assert(abs(a - (7*m)) < 1E-6*m);
@@ -661,9 +548,6 @@ unittest
 unittest
 {
 	writeln("Units Test 8");
-    
-    writeln(J.toString());
-    writeln(W.toString());
     
 	assert(J.toString() == "1000mJ");
 	assert(W.toString() == "1000mW");

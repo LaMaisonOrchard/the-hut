@@ -282,6 +282,26 @@ public
     enum km3 = BaseUnits!"m3"(1.0E9);
     
     alias Volume = BaseUnits!"m3";
+    
+    alias Energy = BaseUnits!"m2g/s2";
+    
+    enum uJ = Energy(1.0E-3);
+    enum mJ = Energy(1.0);
+    enum cJ = Energy(1.0E1);
+    enum dJ = Energy(1.0E2);
+    enum  J = Energy(1.0E3);
+    enum kJ = Energy(1.0E6);
+    enum MJ = Energy(1.0E9);
+    
+    alias Power = BaseUnits!"m2g/s";
+    
+    enum uW = Power(1.0E-3);
+    enum mW = Power(1.0);
+    enum cW = Power(1.0E1);
+    enum dW = Power(1.0E2);
+    enum  W = Power(1.0E3);
+    enum kW = Power(1.0E6);
+    enum MW = Power(1.0E9);
 }
 
 // m, g, s, A, K, mol, cd, Hz, Error
@@ -633,9 +653,18 @@ unittest
     
     double c = a/m;
     Length d = b/m;
-    writeln(c);
-    writeln(d.toString());
     
 	assert(abs(c - 2.0) < 1E-6);
 	assert(abs(d - BaseUnits!"m"(3.0)) < BaseUnits!"m"(1E-6));
+}
+
+unittest
+{
+	writeln("Units Test 8");
+    
+    writeln(J.toString());
+    writeln(W.toString());
+    
+	assert(J.toString() == "1000mJ");
+	assert(W.toString() == "1000mW");
 }

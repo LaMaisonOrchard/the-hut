@@ -44,7 +44,7 @@ public   // BaseUnits
         auto opBinary(string op : "/", string type2)(const(BaseUnits!type2) rhs) const
         if (type != type2)
         {
-            return BaseUnits!(combineDiv(type, type2))(this.value * rhs.value);
+            return BaseUnits!(combineDiv(type, type2))(this.value / rhs.value);
         }
         
         const(BaseUnits!type) opBinaryRight(string op : "*")(const(double) lhs) const
@@ -144,7 +144,7 @@ public   // BaseUnits
 public // Specific Types and Constants 
 {
     ///////////////////////////////////////////////////
-    // m, g, s, A, K, mol, cd, Cyl
+    // km, g, s, A, K, mol, cd, Cyl
     
     alias Length = BaseUnits!"m";
     
@@ -155,7 +155,7 @@ public // Specific Types and Constants
     enum  m = Length(1.0);
     enum km = Length(1.0E3);
     
-    alias Mass = BaseUnits!"g";
+    alias Mass = BaseUnits!"kg";
     
     enum mg = Mass(1.0E-3);
     enum cg = Mass(1.0E-2);
@@ -217,81 +217,81 @@ public // Specific Types and Constants
     enum  m3 = Volume(1.0);
     enum km3 = Volume(1.0E9);
     
-    alias Energy = BaseUnits!"m2g/s2";
+    alias Energy = BaseUnits!"kgm2/s2";
     
-    enum uJ = Energy(1.0E-3);
-    enum mJ = Energy(1.0);
-    enum cJ = Energy(1.0E1);
-    enum dJ = Energy(1.0E2);
-    enum  J = Energy(1.0E3);
-    enum kJ = Energy(1.0E6);
-    enum MJ = Energy(1.0E9);
+    enum uJ = Energy(1.0E-6);
+    enum mJ = Energy(1.0E-3);
+    enum cJ = Energy(1.0E-2);
+    enum dJ = Energy(1.0E-1);
+    enum  J = Energy(1.0);
+    enum kJ = Energy(1.0E3);
+    enum MJ = Energy(1.0E6);
     
-    alias Power = BaseUnits!"m2g/s";
+    alias Power = BaseUnits!"kgm2/s3";
     
-    enum uW = Power(1.0E-3);
-    enum mW = Power(1.0);
-    enum cW = Power(1.0E1);
-    enum dW = Power(1.0E2);
-    enum  W = Power(1.0E3);
-    enum kW = Power(1.0E6);
-    enum MW = Power(1.0E9);
+    enum uW = Power(1.0E-6);
+    enum mW = Power(1.0E-3);
+    enum cW = Power(1.0E-2);
+    enum dW = Power(1.0E-1);
+    enum  W = Power(1.0);
+    enum kW = Power(1.0E3);
+    enum MW = Power(1.0E6);
     
-    alias Force = BaseUnits!"mg/s2";
+    alias Force = BaseUnits!"kgm/s2";
     
-    enum uN = Force(1.0E-3);
-    enum mN = Force(1.0);
-    enum cN = Force(1.0E1);
-    enum dN = Force(1.0E2);
-    enum  N = Force(1.0E3);
-    enum kN = Force(1.0E6);
-    enum MN = Force(1.0E9);
+    enum uN = Force(1.0E-6);
+    enum mN = Force(1.0E-3);
+    enum cN = Force(1.0E-2);
+    enum dN = Force(1.0E-1);
+    enum  N = Force(1.0);
+    enum kN = Force(1.0E3);
+    enum MN = Force(1.0E6);
     
-    alias Pressure = BaseUnits!"g/ms2";
+    alias Pressure = BaseUnits!"kg/ms2";
     
-    enum uPa = Pressure(1.0E-3);
-    enum mPa = Pressure(1.0);
-    enum cPa = Pressure(1.0E1);
-    enum dPa = Pressure(1.0E2);
-    enum  Pa = Pressure(1.0E3);
-    enum kPa = Pressure(1.0E6);
-    enum MPa = Pressure(1.0E9);
+    enum uPa = Pressure(1.0E-6);
+    enum mPa = Pressure(1.0E-3);
+    enum cPa = Pressure(1.0E-2);
+    enum dPa = Pressure(1.0E-1);
+    enum  Pa = Pressure(1.0);
+    enum kPa = Pressure(1.0E3);
+    enum MPa = Pressure(1.0E6);
     
-    enum ubar = Pressure(1.0E-2);
-    enum mbar = Pressure(1.0E5);
-    enum cbar = Pressure(1.0E6);
-    enum dbar = Pressure(1.0E7);
-    enum  bar = Pressure(1.0E8);
-    enum kbar = Pressure(1.0E11);
-    enum Mbar = Pressure(1.0E14);
+    enum ubar = Pressure(1.0E-1);
+    enum mbar = Pressure(1.0E2);
+    enum cbar = Pressure(1.0E1);
+    enum dbar = Pressure(1.0E2);
+    enum  bar = Pressure(1.0E3);
+    enum kbar = Pressure(1.0E8);
+    enum Mbar = Pressure(1.0E11);
     
-    enum upsi = Pressure(6894.757E-3);
-    enum mpsi = Pressure(6894.757);
-    enum cpsi = Pressure(6894.757E1);
-    enum dpsi = Pressure(6894.757E2);
-    enum  psi = Pressure(6894.757E3);
-    enum kpsi = Pressure(6894.757E6);
-    enum Mpsi = Pressure(6894.757E9);
+    enum upsi = Pressure(6894.757E-6);
+    enum mpsi = Pressure(6894.757-3);
+    enum cpsi = Pressure(6894.757E-2);
+    enum dpsi = Pressure(6894.757E-1);
+    enum  psi = Pressure(6894.757);
+    enum kpsi = Pressure(6894.757E3);
+    enum Mpsi = Pressure(6894.757E6);
     
-    alias Volts = BaseUnits!"m2g/s3A";
+    alias Volts = BaseUnits!"kgm2/s3A";
     
-    enum uV = Volts(1.0E-3);
-    enum mV = Volts(1.0);
-    enum cV = Volts(1.0E1);
-    enum dV = Volts(1.0E2);
-    enum  V = Volts(1.0E3);
-    enum kV = Volts(1.0E6);
-    enum MV = Volts(1.0E9);
+    enum uV = Volts(1.0E-6);
+    enum mV = Volts(1.0E-3);
+    enum cV = Volts(1.0E-2);
+    enum dV = Volts(1.0E-1);
+    enum  V = Volts(1.0);
+    enum kV = Volts(1.0E3);
+    enum MV = Volts(1.0E6);
     
-    alias Ohms = BaseUnits!"m2g/s3A2";
+    alias Ohms = BaseUnits!"kgm2/s3A2";
     
-    enum uOhm = Ohms(1.0E-3);
-    enum mOhm = Ohms(1.0);
-    enum cOhm = Ohms(1.0E1);
-    enum dOhm = Ohms(1.0E2);
-    enum  Ohm = Ohms(1.0E3);
-    enum kOhm = Ohms(1.0E6);
-    enum MOhm = Ohms(1.0E9);
+    enum uOhm = Ohms(1.0E-6);
+    enum mOhm = Ohms(1.0E-3);
+    enum cOhm = Ohms(1.0E-2);
+    enum dOhm = Ohms(1.0E-1);
+    enum  Ohm = Ohms(1.0);
+    enum kOhm = Ohms(1.0E3);
+    enum MOhm = Ohms(1.0E6);
     
     alias Wavelength = BaseUnits!"m/Cyl";
     
@@ -305,11 +305,11 @@ public // Specific Types and Constants
 private  // Units manipulation
 {
 
-    // m, g, s, A, K, mol, cd, Cyl, Error
+    // kg, m, s, A, K, mol, cd, Cyl, Error
     enum int UNITS_LEN = 9;
 
-    // J = k(gm2/s2)
-    // W = Js = k(gm2/s)
+    // J = kgm2/s2
+    // W = Js = kgm2/s
 
     string combine(string type1, string type2) pure
     {
@@ -333,23 +333,23 @@ private  // Units manipulation
     {
         switch (type)
         {
-            case "m2g/s2" : return "mJ";
-            case "s2/m2g" : return " 1/mJ";
+            case "kgm2/s2" : return "J";
+            case "s2/kgm2" : return " 1/J";
             
-            case "m2g/s" : return "mW";
-            case "s/m2g" : return " 1/mW";
+            case "kgm2/s3" : return "W";
+            case "kgs3/m2" : return " 1/W";
             
-            case "mg/s2" : return "mN";
-            case "s2/mg" : return " 1/mN";
+            case "kgm/s2" : return "N";
+            case "s2/kgm" : return " 1/N";
             
-            case "g/ms2" : return "mPa";
-            case "ms2/g" : return " 1/mPa";
+            case "kg/ms2" : return "Pa";
+            case "ms2/kg" : return " 1/Pa";
             
-            case "m2g/s3A" : return "mV";
-            case "s3A/m2g" : return " 1/mV";
+            case "kgm2/s3A" : return "V";
+            case "s3A/kgm2" : return " 1/V";
             
-            case "m2g/s3A2" : return "mOhm";
-            case "s3A2/m2g" : return " 1/mOhm";
+            case "kgm2/s3A2" : return "Ohm";
+            case "s3A2/kgm2" : return " 1/Ohm";
             
             case "Cyl" : return "Cycles";
             case "1/Cyl" : return " 1/Cycles";
@@ -385,11 +385,35 @@ private  // Units manipulation
                 mul = -mul;
                 type = type[1..$];
             }
+            else if (type[0] == '1')
+            {
+                type = type[1..$];
+            }
+            else if (type[0] == ' ')
+            {
+                type = type[1..$];
+            }
             else
             {
                 int idx = 8;   // Default ios error
                 switch (type[0])
                 {
+                    case 'k':
+                    {
+                        if ((type.length > 2) && (type[0..2] == "kg"))
+                        {
+                            idx = 0;
+                            type = type[2..$];
+                        }
+                        else
+                        {
+                            // Error
+                            idx = 8;
+                            type = type[1..$];
+                        }
+                    }
+                    break;
+                    
                     case 'm':
                     {
                         if ((type.length > 2) && (type[0..3] == "mol"))
@@ -399,13 +423,12 @@ private  // Units manipulation
                         }
                         else
                         {
-                            idx = 0;
+                            idx = 1;
                             type = type[1..$];
                         }
                     }
                     break;
                     
-                    case 'g': idx = 1; type = type[1..$]; break;
                     case 's': idx = 2; type = type[1..$]; break;
                     case 'A': idx = 3; type = type[1..$]; break;
                     case 'K': idx = 4; type = type[1..$]; break;
@@ -481,9 +504,9 @@ private  // Units manipulation
             {
                 switch(i)
                 {
-                    // m, g, s, A, K, mol, cd, Cyl, Error
-                    case 0: type[idx++] = 'm'; break;
-                    case 1: type[idx++] = 'g'; break;
+                    // kg, m, s, A, K, mol, cd, Cyl, Error
+                    case 0: type[idx..idx+2] = "kg"; idx += 2; break;
+                    case 1: type[idx++] = 'm'; break;
                     case 2: type[idx++] = 's'; break;
                     case 3: type[idx++] = 'A'; break;
                     case 4: type[idx++] = 'K'; break;
@@ -511,6 +534,7 @@ private  // Units manipulation
         
         if (idx == 0)
         {
+            type[idx++] = ' ';
             type[idx++] = '1';
         }
         
@@ -528,9 +552,9 @@ private  // Units manipulation
                 
                 switch(i)
                 {
-                    // m, g, s, A, K, mol, cd, Cyl, Error
-                    case 0: type[idx++] = 'm'; break;
-                    case 1: type[idx++] = 'g'; break;
+                    // kg, m, s, A, K, mol, cd, Cyl, Error
+                    case 0: type[idx..idx+2] = "kg"; idx += 2; break;
+                    case 1: type[idx++] = 'm'; break;
                     case 2: type[idx++] = 's'; break;
                     case 3: type[idx++] = 'A'; break;
                     case 4: type[idx++] = 'K'; break;
@@ -1011,11 +1035,16 @@ private  // Unit Tests
         writeln("Units Test 5");
         Length a = 7*m;
         
-        BaseUnits!"1/m" b = 2/a;
-        assert(abs(b - BaseUnits!"1/m"(2.0/7.0)) < BaseUnits!"1/m"(1E-6));
+        BaseUnits!" 1/m" b = 2/a;
+        assert(abs(b - BaseUnits!" 1/m"(2.0/7.0)) < BaseUnits!" 1/m"(1E-6));
         
         a = 2/b;
         assert(abs(a - (7*m)) < 1E-6*m);
+        
+        auto c = 1/m;
+        auto d = 1/c;
+        assert(c.toString() == "1 1/m");
+        assert(d.toString() == "1m");
     }
 
     unittest
@@ -1044,8 +1073,8 @@ private  // Unit Tests
     {
         writeln("Units Test 8");
         
-        assert(J.toString() == "1000mJ");
-        assert(W.toString() == "1000mW");
+        assert(J.toString() == "1J");
+        assert(W.toString() == "1W");
     }
 
     unittest
@@ -1076,5 +1105,19 @@ private  // Unit Tests
         assert(a.toString() == "258.15'K");
         d = cast(Fahrenheit)a;
         assert(d.toString() == "5'F");
+    }
+
+    unittest
+    {
+        writeln("Units Test 10");
+        
+        Volts   a = 5*V;
+        Current b = 2*A;
+        
+        Power c = a*b;
+        Ohms  d = a/b;
+        
+        assert(c.toString() == "10W");
+        assert(d.toString() == "2.5Ohm");
     }
 }

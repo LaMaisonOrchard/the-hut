@@ -62,8 +62,6 @@ public // Specific Types and Constants
     
     ////////////////////////////////////////////////////////////////
     
-    alias Area = BaseUnits!"m2";
-    
     enum um2 = Area.unity * 1.0E-12;
     enum mm2 = Area.unity * 1.0E-6;
     enum cm2 = Area.unity * 1.0E-4;
@@ -71,7 +69,6 @@ public // Specific Types and Constants
     enum  m2 = Area.unity * 1.0;
     enum km2 = Area.unity * 1.0E6;
     
-    alias Volume = BaseUnits!"m3";
     
     enum um3 = Volume.unity * 1.0E-18;
     enum mm3 = Volume.unity * 1.0E-9;
@@ -80,7 +77,6 @@ public // Specific Types and Constants
     enum  m3 = Volume.unity * 1.0;
     enum km3 = Volume.unity * 1.0E9;
     
-    alias Energy = BaseUnits!"kgm2s-2";
     
     enum uJ = Energy.unity * 1.0E-6;
     enum mJ = Energy.unity * 1.0E-3;
@@ -90,7 +86,6 @@ public // Specific Types and Constants
     enum kJ = Energy.unity * 1.0E3;
     enum MJ = Energy.unity * 1.0E6;
     
-    alias Power = BaseUnits!"kgm2s-3";
     
     enum uW = Power.unity * 1.0E-6;
     enum mW = Power.unity * 1.0E-3;
@@ -100,7 +95,6 @@ public // Specific Types and Constants
     enum kW = Power.unity * 1.0E3;
     enum MW = Power.unity * 1.0E6;
     
-    alias Force = BaseUnits!"kgms-2";
     
     enum uN = Force.unity * 1.0E-6;
     enum mN = Force.unity * 1.0E-3;
@@ -110,7 +104,6 @@ public // Specific Types and Constants
     enum kN = Force.unity * 1.0E3;
     enum MN = Force.unity * 1.0E6;
     
-    alias Pressure = BaseUnits!"kgm-1s-2";
     
     enum uPa = Pressure.unity * 1.0E-6;
     enum mPa = Pressure.unity * 1.0E-3;
@@ -128,15 +121,6 @@ public // Specific Types and Constants
     enum kbar = Pressure.unity * 1.0E8;
     enum Mbar = Pressure.unity * 1.0E11;
     
-    enum upsi = Pressure.unity * 6894.757E-6;
-    enum mpsi = Pressure.unity * 6894.757E-3;
-    enum cpsi = Pressure.unity * 6894.757E-2;
-    enum dpsi = Pressure.unity * 6894.757E-1;
-    enum  psi = Pressure.unity * 6894.757;
-    enum kpsi = Pressure.unity * 6894.757E3;
-    enum Mpsi = Pressure.unity * 6894.757E6;
-    
-    alias Volts = BaseUnits!"kgm2s-3A-1";
     
     enum uV = Volts.unity * 1.0E-6;
     enum mV = Volts.unity * 1.0E-3;
@@ -146,7 +130,6 @@ public // Specific Types and Constants
     enum kV = Volts.unity * 1.0E3;
     enum MV = Volts.unity * 1.0E6;
     
-    alias Resistance = BaseUnits!"kgm2s-3A-2";
     
     enum uOhm = Resistance.unity * 1.0E-6;
     enum mOhm = Resistance.unity * 1.0E-3;
@@ -156,11 +139,6 @@ public // Specific Types and Constants
     enum kOhm = Resistance.unity * 1.0E3;
     enum MOhm = Resistance.unity * 1.0E6;
     
-    alias Wavelength = BaseUnits!"mCyl-1";
-    
-    alias Velocity = BaseUnits!"ms-1";
-    
-    alias Acceleration = BaseUnits!"ms-2";
     
     /////////////////////////////////////////////////////
 }
@@ -422,5 +400,15 @@ private  // Unit Tests
         
         assert(c.toString() == "10W");
         assert(d.toString() == "2.5Ohm");
+    }
+
+    unittest
+    {
+        writeln("SI Units Test 11");
+        
+        Volts      a = make!"V"(5);
+        Resistance b = make!"Ohm"(2.5);
+        
+        assert((a/b).toString() == "2A");
     }
 }

@@ -2,8 +2,18 @@ import std.stdio;
 import std.format;
 import std.string;
 public import baseUnits;
-public import baseUnits : abs, opEquals;
 import si;
+
+public
+{
+    enum upsi = Pressure.unity * 6894.757E-6;
+    enum mpsi = Pressure.unity * 6894.757E-3;
+    enum cpsi = Pressure.unity * 6894.757E-2;
+    enum dpsi = Pressure.unity * 6894.757E-1;
+    enum  psi = Pressure.unity * 6894.757;
+    enum kpsi = Pressure.unity * 6894.757E3;
+    enum Mpsi = Pressure.unity * 6894.757E6;
+}
 
 public   // Rankine
 {

@@ -110,6 +110,11 @@ public   // BaseUnits
         
         private double value;
     }
+    
+    auto make(string type)(double value)
+    {
+        return BaseUnits!(standardInv(type))(value);
+    }
         
     bool opEquals(string type)(const(BaseUnits!type) a, const(BaseUnits!type) b)
     {
@@ -140,6 +145,22 @@ public   // BaseUnits
         }
     }
 }
+
+public
+{ 
+    alias Area         = BaseUnits!"m2";
+    alias Volume       = BaseUnits!"m3";
+    alias Energy       = BaseUnits!"kgm2s-2";
+    alias Power        = BaseUnits!"kgm2s-3";
+    alias Force        = BaseUnits!"kgms-2";
+    alias Pressure     = BaseUnits!"kgm-1s-2";
+    alias Volts        = BaseUnits!"kgm2s-3A-1";
+    alias Resistance   = BaseUnits!"kgm2s-3A-2";
+    alias Wavelength   = BaseUnits!"mCyl-1";
+    alias Velocity     = BaseUnits!"ms-1";
+    alias Acceleration = BaseUnits!"ms-2";
+    alias Density      = BaseUnits!"kgm-2";
+}
  
 private  // Units manipulation
 {
@@ -168,10 +189,45 @@ private  // Units manipulation
         return build(a);
     }
 
+    string standardType(string type2) pure
+    {
+        int[UNITS_LEN] a;
+        extract(type2, a);
+        
+        return build(a);
+    }
+
     string inverseType(string type2) pure
     {
         int[UNITS_LEN] a;
         extract(type2, a, -1);
+        
+        return build(a);
+    }
+
+    string powerType(string type, int pwr) pure
+    {
+        int[UNITS_LEN] a;
+        extract(type, a);
+        
+        foreach(ref b ; a)
+        {
+            b *= pwr;
+        }
+        
+        return build(a);
+    }
+
+    string rootType(string type, int pwr) pure
+    {
+        int[UNITS_LEN] a;
+        extract(type, a);
+        
+        foreach(ref b ; a)
+        {
+            assert((b%pwr) == 0);
+            b /= pwr;
+        }
         
         return build(a);
     }
@@ -210,12 +266,36 @@ private  // Units manipulation
         }
     }
 
-    void extract(string type, int[UNITS_LEN] a) pure
+    string standardInv(string type) pure
+    {
+        switch (type)
+        {
+            case "J" : return "kgm2s-2";
+            
+            case "W" : return "kgm2s-3";
+            
+            case "N" : return "kgms-2";
+            
+            case "Pa" : return "kgm-1s-2";
+            
+            case "V" : return "kgm2s-3A-1";
+            
+            case "Ohm" : return "kgm2s-3A-2";
+            
+            case "Hz" : return "s-1Cyl";
+            
+            case "'K" : return "K";
+            
+            default: return standardType(type);
+        }
+    }
+
+    void extract(string type, int[] a) pure
     {
         extract(type, a, 1);
     }
 
-    void extract(string type, int[UNITS_LEN] a, const(int)inv) pure
+    void extract(string type, int[] a, const(int)inv) pure
     {
         while (type.length > 0)
         {
@@ -336,7 +416,7 @@ private  // Units manipulation
     }
 
 
-    string build(int[UNITS_LEN] a) pure
+    string build(int[] a) pure
     {
         int idx = 0;
         char[32] type;
@@ -411,5 +491,16 @@ private  // Units manipulation
             b = " 1";
         }
         return format!("%s/%s")(b,a);
+    }
+}
+
+private
+{
+    unittest
+    {
+        writeln("BaseUnits Test 1");
+        
+        assert(powerType("ms-2", 2) == "m2s-4");
+        assert(rootType("m2s-4", 2) == "ms-2");
     }
 }
